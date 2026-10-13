@@ -1,0 +1,41 @@
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local startTime = 0
+local isTimerRunning = false
+
+-- ฟังก์ชันเริ่มจับเวลา
+local function startPuzzleTimer()
+	startTime = os.clock()
+	isTimerRunning = true
+	print("เริ่มจับเวลาแล้ว! ขอให้โชคดี")
+end
+
+-- ฟังก์ชันหยุดจับเวลาและแสดงผล
+local function stopPuzzleTimer()
+	if not isTimerRunning then return end
+	
+	isTimerRunning = false
+	local elapsedTime = os.clock() - startTime
+	local formattedTime = string.format("%.2f", elapsedTime)
+	
+	-- ข้อความแจ้งเตือนภาษาไทย
+	local message = "🎉 ยินดีด้วย! คุณแก้ปริศนาสำเร็จในเวลา " .. formattedTime .. " วินาที"
+	print(message)
+	
+	-- อัปเดตสถิติลงตารางคะแนน
+	local leaderstats = player:FindFirstChild("leaderstats")
+	if leaderstats then
+		local bestTime = leaderstats:FindFirstChild("เวลาที่ดีที่สุด")
+		local solveCount = leaderstats:FindFirstChild("แก้สำเร็จ (ครั้ง)")
+		
+		if solveCount then
+			solveCount.Value = solveCount.Value + 1
+		end
+		
+		if bestTime and elapsedTime < bestTime.Value then
+			bestTime.Value = tonumber(formattedTime)
+			print("🏆 ทำลายสถิติใหม่สำเร็จ!")
+		end
+	end
+end
